@@ -12,6 +12,11 @@ export default function TrackingPage() {
   const [tab, setTab] = useState<'emp' | 'hod'>('emp');
   const [sending, setSending] = useState<string | null>(null);
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
+
   const handleSendMail = async (target: 'EMP' | 'HOD', selectedEmployeeIds?: string[]) => {
     const key = target + (selectedEmployeeIds ? selectedEmployeeIds.join(',') : '');
     setSending(key);
@@ -59,9 +64,18 @@ export default function TrackingPage() {
   return (
     <div className="app-shell" style={{ padding: '0 32px' }}>
       <header className="topbar" style={{ justifyContent: 'center', padding: '0' }}>
-        <div style={{ display: 'flex', width: '100%', maxWidth: '1280px', alignItems: 'center' }}>
-          <button className="btn btn-outline" onClick={() => router.push('/')}>&larr; Back to Dashboard</button>
-          <span style={{ marginLeft: 20, fontWeight: 600 }}>Tracking: {cycle.month} {cycle.year}</span>
+        <div style={{ display: 'flex', width: '100%', maxWidth: '1280px', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button className="btn btn-outline" onClick={() => router.push('/')}>&larr; Back to Dashboard</button>
+            <span style={{ marginLeft: 20, fontWeight: 600 }}>Tracking: {cycle.month} {cycle.year}</span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="btn btn-outline btn-sm"
+            style={{ borderColor: '#ef4444', color: '#ef4444' }}
+          >
+            Log out
+          </button>
         </div>
       </header>
 
