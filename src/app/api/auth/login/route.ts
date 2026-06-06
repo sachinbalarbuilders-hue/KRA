@@ -16,13 +16,6 @@ export async function POST(request: Request) {
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password are required.' }, { status: 400 });
     }
-
-    console.log('Login attempt:', { inputUser: username, envUser: adminUsername });
-    console.log('Stored Hash Check:', { 
-      hash: adminPasswordHash,
-      startsWithQuote: adminPasswordHash.startsWith("'") || adminPasswordHash.startsWith('"')
-    });
-
     if (username !== adminUsername) {
       return NextResponse.json({ error: 'Invalid username or password.' }, { status: 401 });
     }
@@ -34,10 +27,7 @@ export async function POST(request: Request) {
     if (cleanHash.startsWith('"') && cleanHash.endsWith('"')) {
       cleanHash = cleanHash.slice(1, -1);
     }
-
-    console.log('Username matched, checking password...');
     const passwordMatch = await bcrypt.compare(password, cleanHash);
-    console.log('Password match result:', passwordMatch);
 
     if (!passwordMatch) {
       return NextResponse.json({ error: 'Invalid username or password.' }, { status: 401 });

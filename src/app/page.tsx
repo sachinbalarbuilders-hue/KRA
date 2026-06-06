@@ -488,17 +488,8 @@ export default function Dashboard() {
           </nav>
           <button
             onClick={handleLogout}
-            style={{
-              background: 'none',
-              border: '1px solid rgba(255,255,255,0.2)',
-              color: 'rgba(255,255,255,0.7)',
-              borderRadius: '6px',
-              padding: '6px 14px',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              marginLeft: '16px'
-            }}
+            className="btn btn-outline btn-sm"
+            style={{ borderColor: '#ef4444', color: '#ef4444', marginLeft: '16px' }}
           >
             Log out
           </button>
