@@ -7,7 +7,7 @@ import { FiPlus, FiX, FiTrash2, FiEdit2, FiSend, FiChevronRight } from 'react-ic
 // ── TYPES ──────────────────────────────────────────────────────
 interface KPI { text: string }
 interface KRA { kra: string; weightage: string; kpis: KPI[] }
-interface Employee { id: string; name: string; email: string; hodName?: string; hodEmail?: string; kras?: any[]; isException?: boolean }
+interface Employee { id: string; name: string; email: string; department?: string; hodName?: string; hodEmail?: string; kras?: any[]; isException?: boolean }
 interface Cycle { id: string; month: string; year: number; kraEditDeadline: string; empEvalStartDate: string; empEvalEndDate: string; isActive: boolean; submissions?: any[] }
 interface Provider { id: string; title: string; host: string; port: string; encryption: string; secure: boolean; fromName?: string; email: string; isActive: boolean }
 interface Department { id: string; name: string }

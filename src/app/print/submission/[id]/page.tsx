@@ -30,8 +30,6 @@ export default async function PrintSubmissionPage({ params }: { params: Promise<
   const totalWeight = employee.kras.reduce((acc, k) => acc + k.weightage, 0);
   const totalEmpScore = scores.reduce((acc, s) => acc + (s.empScore || 0), 0);
   const totalHodScore = scores.reduce((acc, s) => acc + (s.hodScore || 0), 0);
-  const totalAdminScore = scores.reduce((acc, s) => acc + (s.adminScore || 0), 0);
-
   return (
     <div className="main-container" style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <div style={{ textAlign: 'center', marginBottom: '30px', paddingBottom: '15px', borderBottom: '1px solid #d1d5db' }}>
@@ -77,8 +75,7 @@ export default async function PrintSubmissionPage({ params }: { params: Promise<
               <td style={{ border: '1px solid #374151', padding: '12px', verticalAlign: 'top', fontSize: '13px' }}>
                 {score.empRemark && <div style={{ marginBottom: '6px' }}><strong>Emp:</strong> {score.empRemark}</div>}
                 {score.hodRemark && <div style={{ marginBottom: '6px' }}><strong>HOD:</strong> {score.hodRemark}</div>}
-                {score.adminRemark && <div style={{ marginBottom: '6px' }}><strong>Admin:</strong> {score.adminRemark} <em>(Final Score: {score.adminScore})</em></div>}
-                {!score.empRemark && !score.hodRemark && !score.adminRemark && <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No remarks</span>}
+                {!score.empRemark && !score.hodRemark && <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>No remarks</span>}
               </td>
             </tr>
           )) : employee.kras.map((kra, idx) => (
