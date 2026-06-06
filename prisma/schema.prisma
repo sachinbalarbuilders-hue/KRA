@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  department  String?
+  hodName     String?
+  hodEmail    String?
+  isException Boolean  @default(false) // If true, excluded from evaluation cycles
+  kras        KRATemplate[]
+  submissions Submission[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model KRATemplate {
+  id          String   @id @default(cuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  kra         String
+  kpi         String
+  weightage   Int
+  scores      SubmissionScore[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EvaluationCycle {
+  id               String       @id @default(cuid())
+  month            String
+  year             Int
+  isActive         Boolean      @default(true)
+  kraEditDeadline  DateTime     @default(now())
+  empEvalStartDate DateTime     @default(now())
+  empEvalEndDate   DateTime     @default(now())
+  lastEmpRemindedAt DateTime?
+  lastHodRemindedAt DateTime?
+  submissions      Submission[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Submission {
+  id                String   @id @default(cuid())
+  employeeId        String
+  employee          Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  evaluationCycleId String
+  evaluationCycle   EvaluationCycle @relation(fields: [evaluationCycleId], references: [id], onDelete: Cascade)
+  status            String   // "PENDING_EMP", "PENDING_HOD", "COMPLETED"
+  empToken          String   @unique
+  hodToken          String?  @unique
+  empEmailSentAt    DateTime? // when employee magic link email was sent
+  empEvaluatedAt    DateTime? // when employee submitted their self-evaluation
+  hodEmailSentAt    DateTime? // when HOD reminder email was sent
+  hodEvaluatedAt    DateTime? // when HOD completed their review
+  scores            SubmissionScore[]
+  editRequest       KraEditRequest?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([employeeId, evaluationCycleId])
+}
+
+model SubmissionScore {
+  id            String   @id @default(cuid())
+  submissionId  String
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  kraTemplateId String
+  kraTemplate   KRATemplate @relation(fields: [kraTemplateId], references: [id], onDelete: Cascade)
+  empScore      Int?
+  empRemark     String?
+  hodScore      Int?
+  hodRemark     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([submissionId, kraTemplateId])
+}
+
+model MailProvider {
+  id           String   @id @default(cuid())
+  title        String
+  host         String
+  port         String
+  encryption   String   @default("TLS / SSL / STARTTLS")
+  secure       Boolean  @default(true)
+  fromName     String?
+  email        String
+  password     String
+  isActive     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model KraEditRequest {
+  id           String     @id @default(cuid())
+  submissionId String     @unique
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  proposedKras Json
+  status       String     // "PENDING", "APPROVED", "REJECTED"
+  history      KraEditHistory[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model KraEditHistory {
+  id             String        @id @default(cuid())
+  editRequestId  String
+  editRequest    KraEditRequest @relation(fields: [editRequestId], references: [id], onDelete: Cascade)
+  employeeId     String
+  cycleName      String
+  action         String        // "APPROVED" | "REJECTED"
+  originalKras   Json
+  proposedKras   Json
+  finalKras      Json          // what admin actually saved (may differ from proposed)
+  adminNote      String?
+  resolvedAt     DateTime      @default(now())
+}
