@@ -101,7 +101,7 @@ export default async function PrintSubmissionPage({ params }: { params: Promise<
               {scores.length > 0 ? totalHodScore : '—'}
             </td>
             <td style={{ border: '1px solid #374151', padding: '12px' }}>
-              {totalAdminScore > 0 ? <strong>Final Admin Total: {totalAdminScore}</strong> : null}
+              {/* Admin score removed */}
             </td>
           </tr>
         </tbody>
